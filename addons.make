@@ -1,6 +1,6 @@
 ofxGui
+ofxOpenCv
 ofxXmlSettings
+ofxCv
 ofxJSON
 ofxZxing
-ofxOpenCv
-ofxCv
