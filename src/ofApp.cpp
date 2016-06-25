@@ -5,11 +5,11 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetWindowTitle("Easync Media - QR Slate");
     ofBackground(25);
-    EasyncVideo test("test.mov");
+    EasyncVideo test("test.mp4");
     videos.push_back(test);
     
     current=0;
-    videos[current].video.play();
+    //videos[current].video.play();
     
 	for(int i=0;i<THRESH_IMAGES;i++)
         thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_GRAYSCALE);
@@ -24,25 +24,26 @@ void ofApp::update(){
         }while(videos[next].processed && next!=current);
         if(next!=current){
             current=next;
-            videos[current].video.play();
+            //videos[current].video.play();
             for(int i=0;i<THRESH_IMAGES;i++)
                 thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_GRAYSCALE);
         }
     }
     
-    //videos[current].video.nextFrame();
+    videos[current].video.nextFrame();
     videos[current].video.update();
     if(!videos[current].processed){
         if(videos[current].video.isFrameNew()) {
             for(int i=0;i<THRESH_IMAGES;i++){
                 ofxCv::convertColor(videos[current].video.getPixelsRef(), thresh[i], CV_RGB2GRAY);
-                float thresholdValue = ofMap(i, 0, THRESH_IMAGES, 0, 255);
+                float thresholdValue = ofMap(i+1, 0, THRESH_IMAGES+1, 0, 255);
                 ofxCv::threshold(thresh[i], thresholdValue);
                 thresh[i].update();
             }
             usedThresh=0;
             do{
-                result = ofxZxing::decode(thresh[usedThresh++].getPixelsRef());
+                result = ofxZxing::decode(videos[current].video.getPixelsRef());
+				usedThresh++;
             }while(!result.getFound() && usedThresh<THRESH_IMAGES);
             videos[current].update(result);
         }
@@ -115,6 +116,12 @@ void ofApp::keyPressed(int key){
         for(int i=0;i<videos.size();i++)
             videos[i].reset();
     }
+	else if(key == 'p'){
+		videos[current].processed=true;
+	}
+	else if(key == 'n'){
+		videos[current].video.nextFrame();
+	}
 }
 
 //--------------------------------------------------------------
@@ -159,6 +166,7 @@ void ofApp::dragEvent(ofDragInfo info){
             if(ofDirectory::doesDirectoryExist(info.files[i])){
                 ofDirectory dir(info.files[i]);
                 dir.allowExt("mov");
+				dir.allowExt("mp4");
                 dir.listDir();
                 dir.sort();
                 

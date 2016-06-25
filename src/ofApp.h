@@ -9,7 +9,7 @@
 #define GUI_HEIGHT VIDEO_HEIGHT
 #define GUI_ITEM 80
 
-#define THRESH_IMAGES 8
+#define THRESH_IMAGES 6
 
 class ofApp : public ofBaseApp{
 
