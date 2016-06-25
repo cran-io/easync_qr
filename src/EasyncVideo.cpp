@@ -13,21 +13,23 @@
 #define COLOR_NO ofColor(180,20,60,alpha)
 
 EasyncVideo::EasyncVideo(string file){
+    if(video.loadMovie(file)){
+		video.setLoopState(OF_LOOP_NONE);
     
-    video.loadMovie(file);
-    video.setLoopState(OF_LOOP_NONE);
+		ofFile f(file);
+		name=f.getFileName();
     
-    ofFile f(file);
-    name=f.getFileName();
-    
-    scale = min(VIDEO_WIDTH/video.getWidth(), VIDEO_HEIGHT/video.getHeight());
-    if(scale>1.0f)
-        scale=1.0f;
-    offset.set((VIDEO_WIDTH-scale*video.getWidth())/2,(VIDEO_HEIGHT-scale*video.getHeight())/2);
-    
-    ofLog(OF_LOG_VERBOSE)<<"Movie file "<<video.getMoviePath()<<" loaded: "<<video.getWidth()<<"x"<<video.getHeight()<<" scale: "<<scale<<endl;
-    
-    processed=false;
+		scale = min(VIDEO_WIDTH/video.getWidth(), VIDEO_HEIGHT/video.getHeight());
+		if(scale>1.0f)
+			scale=1.0f;
+		offset.set((VIDEO_WIDTH-scale*video.getWidth())/2,(VIDEO_HEIGHT-scale*video.getHeight())/2);
+     
+		processed=false;
+		ofLog(OF_LOG_VERBOSE)<<"Movie file "<<video.getMoviePath()<<" loaded: "<<video.getWidth()<<"x"<<video.getHeight()<<" scale: "<<scale<<endl;
+	}else{
+		processed=true;
+		ofLog(OF_LOG_ERROR)<<"Could not load"<<file<<"."<<endl;
+	}
     found=false;
     text="-";
     firstFrame=0;
@@ -54,7 +56,7 @@ void EasyncVideo::update(ofxZxing::Result& result){
            processed=true;
     }
     
-    if(video.getIsMovieDone()){
+    if(video.getPosition()>=0.99f){
         processed=true;
     }
 }

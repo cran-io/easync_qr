@@ -9,8 +9,9 @@ void ofApp::setup(){
     videos.push_back(test);
     
     current=0;
-    //videos[current].video.play();
-    for(int i=0;i<THRESH_IMAGES;i++)
+    videos[current].video.play();
+    
+	for(int i=0;i<THRESH_IMAGES;i++)
         thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_GRAYSCALE);
 }
 
@@ -23,31 +24,30 @@ void ofApp::update(){
         }while(videos[next].processed && next!=current);
         if(next!=current){
             current=next;
-            //videos[current].video.play();
+            videos[current].video.play();
             for(int i=0;i<THRESH_IMAGES;i++)
                 thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_GRAYSCALE);
         }
     }
     
-    videos[current].video.nextFrame();
+    //videos[current].video.nextFrame();
     videos[current].video.update();
     if(!videos[current].processed){
         if(videos[current].video.isFrameNew()) {
             for(int i=0;i<THRESH_IMAGES;i++){
                 ofxCv::convertColor(videos[current].video.getPixelsRef(), thresh[i], CV_RGB2GRAY);
                 float thresholdValue = ofMap(i, 0, THRESH_IMAGES, 0, 255);
-                cout<<thresholdValue<<endl;
                 ofxCv::threshold(thresh[i], thresholdValue);
                 thresh[i].update();
             }
             usedThresh=0;
             do{
-                result = ofxZxing::decodeThresholded(thresh[usedThresh++].getPixelsRef());
+                result = ofxZxing::decode(thresh[usedThresh++].getPixelsRef());
             }while(!result.getFound() && usedThresh<THRESH_IMAGES);
             videos[current].update(result);
         }
         else{
-            ofLog(OF_LOG_WARNING)<<"Moving without new frame."<<endl;
+            //ofLog(OF_LOG_WARNING)<<"Moving without new frame."<<endl;
         }
     }
 }
@@ -158,12 +158,19 @@ void ofApp::dragEvent(ofDragInfo info){
         for(unsigned int i = 0; i < info.files.size(); i++){
             if(ofDirectory::doesDirectoryExist(info.files[i])){
                 ofDirectory dir(info.files[i]);
+                dir.allowExt("mov");
                 dir.listDir();
                 dir.sort();
-                dir.allowExt(".mov");
                 
                 for(int f=0;f<dir.size();f++){
-                    videos.push_back(EasyncVideo(dir.getPath(f)));
+					string absolutePath = dir.getFile(f).getAbsolutePath();
+#ifdef TARGET_WIN32
+					if(absolutePath.at(1)!=':'){
+						absolutePath="C:"+absolutePath;
+						ofLog(OF_LOG_WARNING)<<"[WINDOWS] Absolute file path doesnt have ':'. Adding 'C:' to the path, please move them to the Local Disk directory:"<<absolutePath<<endl;
+					}
+#endif
+					videos.push_back(EasyncVideo(absolutePath));
                 }
             }
         }
