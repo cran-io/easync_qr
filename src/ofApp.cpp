@@ -34,16 +34,17 @@ void ofApp::update(){
     videos[current].video.update();
     if(!videos[current].processed){
         if(videos[current].video.isFrameNew()) {
-            usedThresh=0;
-            do{
-				ofxCv::copy(videos[current].video.getPixelsRef(),thresh[usedThresh]);
+            for(usedThresh=0;usedThresh<THRESH_IMAGES;usedThresh++){
+				//ofxCv::copy(videos[current].video.getPixelsRef(),thresh[usedThresh]);
                 //ofxCv::convertColor(videos[current].video.getPixelsRef(), thresh[usedThresh], CV_RGB2GRAY);
-                float thresholdValue = ofMap(usedThresh+1, 0, THRESH_IMAGES+1, 0, 255);
+                //float thresholdValue = ofMap(usedThresh+1, 0, THRESH_IMAGES+1, 0, 255);
                 //ofxCv::threshold(thresh[usedThresh], thresholdValue);
-                thresh[usedThresh].update();
-				result = ofxZxing::decode(thresh[usedThresh].getPixelsRef());
-				usedThresh++;
-            }while(!result.getFound() && usedThresh<THRESH_IMAGES);
+                //thresh[usedThresh].update();
+				//result = ofxZxing::decode(thresh[usedThresh].getPixelsRef());
+				result = ofxZxing::decode(videos[current].video.getPixelsRef());
+				if(result.getFound())
+					break;
+            }
             videos[current].update(result);
         }
         else{
@@ -75,7 +76,7 @@ void ofApp::draw(){
         result.draw();		
     }
     ofPopMatrix();
-    ofPushMatrix();
+    /*ofPushMatrix();
     ofTranslate(GUI_WIDTH,0);
     ofScale(videos[current].scale,videos[current].scale);
     for(int i=0;i<THRESH_IMAGES;i++){
@@ -89,7 +90,7 @@ void ofApp::draw(){
     }
     ofSetColor(125);
     ofLine(0,videos[current].video.getHeight()/THRESH_IMAGES,videos[current].video.getWidth(),videos[current].video.getHeight()/THRESH_IMAGES);
-    ofPopMatrix();
+    ofPopMatrix();*/
     ofPushMatrix();
     if((current*GUI_ITEM)>(0.75f*GUI_HEIGHT)){
         ofTranslate(0,(int(0.75f*GUI_HEIGHT/GUI_ITEM)-(int)current)*GUI_ITEM);
