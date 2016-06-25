@@ -12,7 +12,7 @@ void ofApp::setup(){
     //videos[current].video.play();
     
 	for(int i=0;i<THRESH_IMAGES;i++)
-        thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_GRAYSCALE);
+        thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_COLOR);
 }
 
 //--------------------------------------------------------------
@@ -26,7 +26,7 @@ void ofApp::update(){
             current=next;
             //videos[current].video.play();
             for(int i=0;i<THRESH_IMAGES;i++)
-                thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_GRAYSCALE);
+                thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_COLOR);
         }
     }
     
@@ -34,15 +34,14 @@ void ofApp::update(){
     videos[current].video.update();
     if(!videos[current].processed){
         if(videos[current].video.isFrameNew()) {
-            for(int i=0;i<THRESH_IMAGES;i++){
-                ofxCv::convertColor(videos[current].video.getPixelsRef(), thresh[i], CV_RGB2GRAY);
-                float thresholdValue = ofMap(i+1, 0, THRESH_IMAGES+1, 0, 255);
-                ofxCv::threshold(thresh[i], thresholdValue);
-                thresh[i].update();
-            }
             usedThresh=0;
             do{
-                result = ofxZxing::decode(videos[current].video.getPixelsRef());
+				ofxCv::copy(videos[current].video.getPixelsRef(),thresh[usedThresh]);
+                //ofxCv::convertColor(videos[current].video.getPixelsRef(), thresh[usedThresh], CV_RGB2GRAY);
+                float thresholdValue = ofMap(usedThresh+1, 0, THRESH_IMAGES+1, 0, 255);
+                //ofxCv::threshold(thresh[usedThresh], thresholdValue);
+                thresh[usedThresh].update();
+				result = ofxZxing::decode(thresh[usedThresh].getPixelsRef());
 				usedThresh++;
             }while(!result.getFound() && usedThresh<THRESH_IMAGES);
             videos[current].update(result);
