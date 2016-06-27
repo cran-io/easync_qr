@@ -63,20 +63,20 @@ void EasyncVideo::update(ofxZxing::Result& result){
     }
 }
 
-void EasyncVideo::drawInfo(bool selected){
+void EasyncVideo::drawInfo(ofTrueTypeFont& font, bool selected){
     ofPushStyle();
     int alpha=(selected?255:120);
     ofSetColor(255,alpha);
-	ofDrawBitmapString(file.getFileName(),10,20);
+	font.drawString(file.getFileName(),10,20);
     
     ofSetColor(processed?COLOR_YES:COLOR_NO);
-    ofDrawBitmapString("Processed: "+ofToString(processed?"yes":"no"),10,35);
+    font.drawString("Processed: "+ofToString(processed?"yes":"no"),10,35);
     
     ofSetColor(found?COLOR_YES:COLOR_NO);
-    ofDrawBitmapString(text,10,50);
-    ofDrawBitmapString("F:"+ofToString(firstFrame),10,65);
-    ofDrawBitmapString("M:"+ofToString(meanFrame),50,65);
-    ofDrawBitmapString("L:"+ofToString(lastFrame),90,65);
+    font.drawString(text,10,50);
+    font.drawString("F:"+ofToString(firstFrame),10,65);
+    font.drawString("M:"+ofToString(meanFrame),50,65);
+    font.drawString("L:"+ofToString(lastFrame),90,65);
     ofPopStyle();
 }
 

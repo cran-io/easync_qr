@@ -22,7 +22,7 @@ class EasyncVideo{
 public:
     EasyncVideo(string path);
     void update(ofxZxing::Result& result);
-    void drawInfo(bool selected=false);
+    void drawInfo(ofTrueTypeFont& font,bool selected=false);
     void reset();
     
     ofVideoPlayer video;

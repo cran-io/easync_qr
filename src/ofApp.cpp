@@ -5,6 +5,9 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetWindowTitle("Easync Media - QR Slate");
     ofBackground(25);
+
+	font.loadFont("DIN-LightAlternate.ttf",12);
+
     EasyncVideo test("test.mp4");
     videos.push_back(test);
     
@@ -97,7 +100,7 @@ void ofApp::draw(){
     }
     for(int i=0;i<videos.size();i++){
         ofSetColor(255);
-        videos[i].drawInfo(i==current);
+        videos[i].drawInfo(font,i==current);
         ofTranslate(0,GUI_ITEM);
         ofSetColor(125);
         ofLine(0,0,GUI_WIDTH,0);

@@ -34,4 +34,6 @@ class ofApp : public ofBaseApp{
     ofxZxing::Result result;
     ofImage thresh[THRESH_IMAGES];
     unsigned int usedThresh;
+
+	ofTrueTypeFont font;
 };
