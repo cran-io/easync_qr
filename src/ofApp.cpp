@@ -4,7 +4,6 @@
 void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetWindowTitle("Easync Media - QR Slate");
-    ofBackground(25);
 
 	font.loadFont("DIN-LightAlternate.ttf",12);
 
@@ -58,6 +57,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	ofBackgroundGradient(ofColor(100),ofColor(0));
     ofPushMatrix();
     ofTranslate(GUI_WIDTH,0);
     ofTranslate(videos[current].offset);
