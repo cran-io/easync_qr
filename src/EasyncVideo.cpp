@@ -12,13 +12,12 @@
 #define COLOR_YES ofColor(0,180,80,alpha)
 #define COLOR_NO ofColor(180,20,60,alpha)
 
-EasyncVideo::EasyncVideo(string file){
-    if(video.loadMovie(file)){
+EasyncVideo::EasyncVideo(string path){
+	file.open(path);
+
+    if(video.loadMovie(path)){
 		video.setLoopState(OF_LOOP_NONE);
-    
-		ofFile f(file);
-		name=f.getFileName();
-    
+        
 		scale = min(VIDEO_WIDTH/video.getWidth(), VIDEO_HEIGHT/video.getHeight());
 		if(scale>1.0f)
 			scale=1.0f;
@@ -65,7 +64,7 @@ void EasyncVideo::drawInfo(bool selected){
     ofPushStyle();
     int alpha=(selected?255:120);
     ofSetColor(255,alpha);
-    ofDrawBitmapString(name,10,20);
+	ofDrawBitmapString(file.getFileName(),10,20);
     
     ofSetColor(processed?COLOR_YES:COLOR_NO);
     ofDrawBitmapString("Processed: "+ofToString(processed?"yes":"no"),10,35);

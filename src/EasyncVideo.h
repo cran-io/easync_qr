@@ -19,7 +19,7 @@
 
 class EasyncVideo{
 public:
-    EasyncVideo(string file);
+    EasyncVideo(string path);
     void update(ofxZxing::Result& result);
     void drawInfo(bool selected=false);
     void reset();
@@ -28,7 +28,7 @@ public:
     float scale;
     ofPoint offset;
     
-    string name;
+    ofFile file;
     bool processed;
     bool found;
     vector<unsigned int> frames;
