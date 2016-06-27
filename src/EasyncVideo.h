@@ -10,6 +10,7 @@
 
 #include "ofMain.h"
 #include "ofxZxing.h"
+#include "ofxJSON.h"
 
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
@@ -34,4 +35,7 @@ public:
     vector<unsigned int> frames;
     unsigned int firstFrame,meanFrame,lastFrame;
     string text;
+
+	ofxJSONElement result;
+	void writeResult();
 };

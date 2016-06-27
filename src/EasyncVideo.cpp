@@ -51,11 +51,14 @@ void EasyncVideo::update(ofxZxing::Result& result){
     }
     
     if(found){
-       if((video.getCurrentFrame()-lastFrame)>FRAME_DIFF)
+       if((video.getCurrentFrame()-lastFrame)>FRAME_DIFF){
+		   writeResult();
            processed=true;
+	   }
     }
     
     if(video.getPosition()>=0.95f){
+		writeResult();
         processed=true;
     }
 }
@@ -88,4 +91,19 @@ void EasyncVideo::reset(){
     firstFrame=0;
     meanFrame=0;
     lastFrame=0;
+
+	result.clear();
+}
+
+void EasyncVideo::writeResult(){
+	if(!result.size()){
+		result["video"]["totalFrames"] = video.getTotalNumFrames();
+		if(found){
+			result["video"]["qr"]["text"] = text;
+			result["video"]["qr"]["firstFrame"] = firstFrame;
+			result["video"]["qr"]["meanFrame"] = meanFrame;
+			result["video"]["qr"]["lastFrame"] = lastFrame;
+		}
+		result.save(file.getEnclosingDirectory()+file.getBaseName()+".json",true);
+	}
 }
