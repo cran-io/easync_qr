@@ -97,6 +97,7 @@ void EasyncVideo::reset(){
 
 void EasyncVideo::writeResult(){
 	if(!result.size()){
+        result["video"]["name"] = file.getFileName();
 		result["video"]["totalFrames"] = video.getTotalNumFrames();
 		if(found){
 			result["video"]["qr"]["text"] = text;
