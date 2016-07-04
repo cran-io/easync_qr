@@ -4,12 +4,13 @@
 #include "ofxZxing.h"
 #include "EasyncVideo.h"
 #include "ofxCv.h"
+#include "ofxOpenCv.h"
 
 #define GUI_WIDTH 160
 #define GUI_HEIGHT VIDEO_HEIGHT
 #define GUI_ITEM 80
 
-#define THRESH_IMAGES 1
+#define PROCESS_IMAGES 6
 
 class ofApp : public ofBaseApp{
 
@@ -32,8 +33,8 @@ class ofApp : public ofBaseApp{
     unsigned int current;
     
     ofxZxing::Result result;
-    ofImage thresh[THRESH_IMAGES];
-    unsigned int usedThresh;
+    ofxCvColorImage process[PROCESS_IMAGES];
+    unsigned int usedProcess;
 
 	ofTrueTypeFont font;
 };

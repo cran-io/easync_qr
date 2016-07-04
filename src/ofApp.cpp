@@ -7,14 +7,14 @@ void ofApp::setup(){
 
 	font.loadFont("DIN-LightAlternate.ttf",12);
 
-    EasyncVideo test("test.mp4");
+    EasyncVideo test("folder 0/test 3.mov");
     videos.push_back(test);
     
     current=0;
     //videos[current].video.play();
     
-	for(int i=0;i<THRESH_IMAGES;i++)
-        thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_COLOR);
+    for(int i=0; i<PROCESS_IMAGES; i++)
+        process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
 }
 
 //--------------------------------------------------------------
@@ -27,8 +27,8 @@ void ofApp::update(){
         if(next!=current){
             current=next;
             //videos[current].video.play();
-            for(int i=0;i<THRESH_IMAGES;i++)
-                thresh[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight(), OF_IMAGE_COLOR);
+            for(int i=0; i<PROCESS_IMAGES; i++)
+                process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
         }
     }
     
@@ -36,16 +36,30 @@ void ofApp::update(){
     videos[current].video.update();
     if(!videos[current].processed){
         if(videos[current].video.isFrameNew()) {
-            for(usedThresh=0;usedThresh<THRESH_IMAGES;usedThresh++){
-				//ofxCv::copy(videos[current].video.getPixelsRef(),thresh[usedThresh]);
-                //ofxCv::convertColor(videos[current].video.getPixelsRef(), thresh[usedThresh], CV_RGB2GRAY);
-                //float thresholdValue = ofMap(usedThresh+1, 0, THRESH_IMAGES+1, 0, 255);
-                //ofxCv::threshold(thresh[usedThresh], thresholdValue);
-                //thresh[usedThresh].update();
-				//result = ofxZxing::decode(thresh[usedThresh].getPixelsRef());
-				result = ofxZxing::decode(videos[current].video.getPixelsRef());
-				if(result.getFound())
-					break;
+            for(usedProcess=0; usedProcess<PROCESS_IMAGES; usedProcess++){
+                process[usedProcess].setFromPixels(videos[current].video.getPixelsRef());
+                switch(usedProcess){
+                    case 0:
+                        break;
+                    case 1:
+                        process[usedProcess].convertToRange(0,510); //Max:765 Min:-510
+                        break;
+                    case 2:
+                        process[usedProcess].convertToRange(-255,255); //Max:765 Min:-510
+                        break;
+                    case 3:
+                        process[usedProcess].convertToRange(-255,510); //Max:765 Min:-500
+                        break;
+                    case 4:
+                        process[usedProcess].convertToRange(-255,765); //Max:765 Min:-500
+                        break;
+                    case 5:
+                        process[usedProcess].convertToRange(-510,765); //Max:765 Min:-500
+                        break;
+                }
+                result = ofxZxing::decode(process[usedProcess].getRoiPixelsRef());
+                if(result.getFound())
+                    break;
             }
             videos[current].update(result);
         }
@@ -58,6 +72,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofBackgroundGradient(ofColor(100),ofColor(0));
+    ofNoFill();
     ofPushMatrix();
     ofTranslate(GUI_WIDTH,0);
     ofTranslate(videos[current].offset);
@@ -65,35 +80,24 @@ void ofApp::draw(){
     ofSetColor(255);
     videos[current].video.draw(0,0);
     if(result.getFound()) {
-        /*float rotation = result.getRotation();
-        ofVec2f position = result.getScreenPosition();
-        float size = result.getScreenSize() / logo.getWidth();
-        
-        ofPushMatrix();
-        ofTranslate(position);
-        ofRotate(rotation);
-        ofScale(size, size, size);
-        logo.draw(-logo.getWidth() / 2, -logo.getHeight() / 2);
-        ofPopMatrix();*/
-        
-        result.draw();		
+        result.draw();
     }
     ofPopMatrix();
-    /*ofPushMatrix();
+    ofPushMatrix();
     ofTranslate(GUI_WIDTH,0);
     ofScale(videos[current].scale,videos[current].scale);
-    for(int i=0;i<THRESH_IMAGES;i++){
-        if(i<usedThresh)
+    for(int i=0;i<PROCESS_IMAGES;i++){
+        if(i<usedProcess)
             ofSetColor(255,200);
-        else if(i==usedThresh)
+        else if(i==usedProcess)
             ofSetColor(255,255);
         else
             ofSetColor(255,125);
-        thresh[i].draw(i*videos[current].video.getWidth()/THRESH_IMAGES,0,videos[current].video.getWidth()/THRESH_IMAGES,videos[current].video.getHeight()/THRESH_IMAGES);
+        process[i].draw(i*videos[current].video.getWidth()/PROCESS_IMAGES,0,videos[current].video.getWidth()/PROCESS_IMAGES,videos[current].video.getHeight()/PROCESS_IMAGES);
     }
     ofSetColor(125);
-    ofLine(0,videos[current].video.getHeight()/THRESH_IMAGES,videos[current].video.getWidth(),videos[current].video.getHeight()/THRESH_IMAGES);
-    ofPopMatrix();*/
+    ofLine(0,videos[current].video.getHeight()/PROCESS_IMAGES,videos[current].video.getWidth(),videos[current].video.getHeight()/PROCESS_IMAGES);
+    ofPopMatrix();
     ofPushMatrix();
     if((current*GUI_ITEM)>(0.75f*GUI_HEIGHT)){
         ofTranslate(0,(int(0.75f*GUI_HEIGHT/GUI_ITEM)-(int)current)*GUI_ITEM);
@@ -118,6 +122,7 @@ void ofApp::keyPressed(int key){
     if(key == 'r'){
         for(int i=0;i<videos.size();i++)
             videos[i].reset();
+        current=0;
     }
 	else if(key == 'p'){
 		videos[current].processed=true;
