@@ -13,8 +13,10 @@ void ofApp::setup(){
     current=0;
     //videos[current].video.play();
     
+#ifdef TRY_HARDER
     for(int i=0; i<PROCESS_IMAGES; i++)
         process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
+#endif
 }
 
 //--------------------------------------------------------------
@@ -27,8 +29,10 @@ void ofApp::update(){
         if(next!=current){
             current=next;
             //videos[current].video.play();
+#ifdef TRY_HARDER
             for(int i=0; i<PROCESS_IMAGES; i++)
                 process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
+#endif
         }
     }
     
@@ -36,6 +40,7 @@ void ofApp::update(){
     videos[current].video.update();
     if(!videos[current].processed){
         if(videos[current].video.isFrameNew()) {
+#ifdef TRY_HARDER
             for(usedProcess=0; usedProcess<PROCESS_IMAGES; usedProcess++){
                 process[usedProcess].setFromPixels(videos[current].video.getPixelsRef());
                 switch(usedProcess){
@@ -57,10 +62,13 @@ void ofApp::update(){
                         process[usedProcess].convertToRange(-510,765); //Max:765 Min:-500
                         break;
                 }
-                result = ofxZxing::decode(process[usedProcess].getRoiPixelsRef());
+                result = ofxZxing::decode(process[usedProcess].getPixelsRef());
                 if(result.getFound())
                     break;
             }
+#else
+			result = ofxZxing::decode(videos[current].video.getPixelsRef());
+#endif
             videos[current].update(result);
         }
         else{
@@ -83,6 +91,7 @@ void ofApp::draw(){
         result.draw();
     }
     ofPopMatrix();
+#ifdef TRY_HARDER
     ofPushMatrix();
     ofTranslate(GUI_WIDTH,0);
     ofScale(videos[current].scale,videos[current].scale);
@@ -98,6 +107,7 @@ void ofApp::draw(){
     ofSetColor(125);
     ofLine(0,videos[current].video.getHeight()/PROCESS_IMAGES,videos[current].video.getWidth(),videos[current].video.getHeight()/PROCESS_IMAGES);
     ofPopMatrix();
+#endif
     ofPushMatrix();
     if((current*GUI_ITEM)>(0.75f*GUI_HEIGHT)){
         ofTranslate(0,(int(0.75f*GUI_HEIGHT/GUI_ITEM)-(int)current)*GUI_ITEM);

@@ -10,6 +10,7 @@
 #define GUI_HEIGHT VIDEO_HEIGHT
 #define GUI_ITEM 80
 
+//#define TRY_HARDER
 #define PROCESS_IMAGES 6
 
 class ofApp : public ofBaseApp{
@@ -33,8 +34,11 @@ class ofApp : public ofBaseApp{
     unsigned int current;
     
     ofxZxing::Result result;
+
+#ifdef TRY_HARDER
     ofxCvColorImage process[PROCESS_IMAGES];
     unsigned int usedProcess;
+#endif
 
 	ofTrueTypeFont font;
 };
