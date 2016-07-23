@@ -1,6 +1,5 @@
-ofxGui
 ofxOpenCv
-ofxXmlSettings
 ofxCv
 ofxJSON
+ofxVLCVideoPlayer
 ofxZxing
