@@ -56,8 +56,7 @@ void EasyncVideo::update(ofxZxing::Result& result){
            processed=true;
 	   }
     }
-    
-    if(video.getPosition()>=0.95f){
+	else if(video.getPosition()>=0.95f || video.getPosition()*video.getDuration()>=60.0f){
 		writeResult();
         processed=true;
     }
