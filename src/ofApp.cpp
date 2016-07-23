@@ -5,9 +5,9 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetWindowTitle("Easync Media - QR Slate");
 
-	font.loadFont("DIN-LightAlternate.ttf",12);
+	font.loadFont("font.ttf",12);
 
-    EasyncVideo test("folder 0/test 3.mov");
+    EasyncVideo test("test.mp4");
     videos.push_back(test);
     
     current=0;
