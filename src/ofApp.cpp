@@ -79,6 +79,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+#ifndef APP_NO_WINDOW
 	ofBackgroundGradient(ofColor(100),ofColor(0));
     ofNoFill();
     ofPushMatrix();
@@ -125,6 +126,7 @@ void ofApp::draw(){
     ofSetColor(125);
     ofLine(0,0,0,GUI_HEIGHT);
     ofPopMatrix();
+#endif
 }
 
 //--------------------------------------------------------------

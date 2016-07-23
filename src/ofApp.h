@@ -6,6 +6,8 @@
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
 
+//#define APP_NO_WINDOW
+
 #define GUI_WIDTH 160
 #define GUI_HEIGHT VIDEO_HEIGHT
 #define GUI_ITEM 80
