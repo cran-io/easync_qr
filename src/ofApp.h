@@ -3,19 +3,19 @@
 #include "ofMain.h"
 #include "ofxZxing.h"
 
-//#define APP_NO_WINDOW
-//#define TRY_HARDER
+#include "EasyncVideo.h"
+#define GUI_WIDTH 160
+#define GUI_HEIGHT VIDEO_HEIGHT
+#define GUI_ITEM 80
+
+#define APP_WIDTH   (VIDEO_WIDTH+GUI_WIDTH)
+#define APP_HEIGHT  (VIDEO_HEIGHT)
 
 #ifdef TRY_HARDER
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
 #define PROCESS_IMAGES 6
 #endif
-
-#include "EasyncVideo.h"
-#define GUI_WIDTH 160
-#define GUI_HEIGHT VIDEO_HEIGHT
-#define GUI_ITEM 80
 
 class ofApp : public ofBaseApp{
 

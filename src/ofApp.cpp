@@ -78,7 +78,7 @@ void ofApp::update(){
 				videos[current].writeResult();
 			}
         }
-		videos[current].nextFrame();
+		videos[current].next();
     }
 }
 

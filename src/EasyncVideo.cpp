@@ -14,7 +14,9 @@
 
 EasyncVideo::EasyncVideo(string path){
 	file.open(path);
-
+#ifdef APP_NO_WINDOW
+	setUseTexture(false);
+#endif
     if(loadMovie(path)){
 		setLoopState(OF_LOOP_NONE);
         
@@ -42,7 +44,7 @@ void EasyncVideo::start(){
 	setFrame(0);
 }
 
-void EasyncVideo::nextFrame(){
+void EasyncVideo::next(){
 	nextFrame();
 }
 
@@ -57,6 +59,8 @@ void EasyncVideo::save(ofxZxing::Result& result){
             meanFrame+=frames[i];
         meanFrame/=frames.size();
         text=result.getText();
+		if(!found)
+			ofLog(OF_LOG_NOTICE)<<"Found QR code in video with text: "<<result.getText()<<endl;
         found=true;
     }
     

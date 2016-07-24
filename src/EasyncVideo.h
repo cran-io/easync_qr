@@ -12,17 +12,15 @@
 #include "ofxZxing.h"
 #include "ofxJSON.h"
 
-#include "ofxVLCVideoPlayer.h"
+#define APP_NO_WINDOW
+//#define TRY_HARDER
+#define USE_VLC
 
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
 
-#define APP_WIDTH   (VIDEO_WIDTH+GUI_WIDTH)
-#define APP_HEIGHT  (VIDEO_HEIGHT)
-
-#define USE_VLC
-
 #ifdef USE_VLC
+#include "ofxVLCVideoPlayer.h"
 class EasyncVideo: public ofxVLCVideoPlayer{
 #else
 class EasyncVideo: public ofVideoPlayer{
@@ -34,7 +32,7 @@ public:
     void reset();
 
 	void start();
-	void nextFrame();
+	void next();
     
     float scale;
     ofPoint offset;
