@@ -12,9 +12,7 @@ void ofApp::setup(){
     
     current=0;
 
-	videos[current].video.play();
-	//videos[current].video.setPaused(true);
-	//videos[current].video.setFrame(0);    
+	videos[current].start();    
 
 #ifdef TRY_HARDER
     for(int i=0; i<PROCESS_IMAGES; i++)
@@ -35,9 +33,7 @@ void ofApp::update(){
         }while(videos[next].processed && next!=current);
         if(next!=current){
             current=next;
-            videos[current].video.play();
-			//videos[current].video.setPaused(true);
-			//videos[current].video.setFrame(0);
+            videos[current].start();
 #ifdef TRY_HARDER
             for(int i=0; i<PROCESS_IMAGES; i++)
                 process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
@@ -45,8 +41,8 @@ void ofApp::update(){
         }
     }
     
-    videos[current].video.update();
-    if(videos[current].video.isFrameNew()){
+    videos[current].update();
+    if(videos[current].isFrameNew()){
         if(!videos[current].processed) {
 #ifdef TRY_HARDER
             for(usedProcess=0; usedProcess<PROCESS_IMAGES; usedProcess++){
@@ -75,14 +71,14 @@ void ofApp::update(){
                     break;
             }
 #else
-			result = ofxZxing::decode(videos[current].video.getPixelsRef());
+			result = ofxZxing::decode(videos[current].getPixelsRef());
 #endif
-            videos[current].update(result);
+            videos[current].save(result);
 			if(videos[current].processed){
 				videos[current].writeResult();
 			}
         }
-		//videos[current].video.nextFrame();
+		videos[current].nextFrame();
     }
 }
 
@@ -96,7 +92,7 @@ void ofApp::draw(){
     ofTranslate(videos[current].offset);
     ofScale(videos[current].scale,videos[current].scale);
     ofSetColor(255);
-    videos[current].video.draw(0,0);
+    videos[current].draw(0,0);
     if(result.getFound()) {
         result.draw();
     }
@@ -144,19 +140,20 @@ void ofApp::keyPressed(int key){
         for(int i=0;i<videos.size();i++)
             videos[i].reset();
         current=0;
+		videos[current].start();
     }
 	else if(key == 'p'){
 		videos[current].processed=true;
 	}
 	else if(key == 'n'){
-		videos[current].video.nextFrame();
+		videos[current].nextFrame();
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 	if(key == ' '){
-		ofSaveImage(videos[current].video.getPixelsRef(),ofGetTimestampString()+".png");
+		ofSaveImage(videos[current].getPixelsRef(),ofGetTimestampString()+".png");
 	}
 }
 

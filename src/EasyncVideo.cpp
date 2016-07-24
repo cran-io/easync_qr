@@ -15,16 +15,16 @@
 EasyncVideo::EasyncVideo(string path){
 	file.open(path);
 
-    if(video.loadMovie(path)){
-		video.setLoopState(OF_LOOP_NONE);
+    if(loadMovie(path)){
+		setLoopState(OF_LOOP_NONE);
         
-		scale = min(VIDEO_WIDTH/video.getWidth(), VIDEO_HEIGHT/video.getHeight());
+		scale = min(VIDEO_WIDTH/getWidth(), VIDEO_HEIGHT/getHeight());
 		if(scale>1.0f)
 			scale=1.0f;
-		offset.set((VIDEO_WIDTH-scale*video.getWidth())/2,(VIDEO_HEIGHT-scale*video.getHeight())/2);
+		offset.set((VIDEO_WIDTH-scale*getWidth())/2,(VIDEO_HEIGHT-scale*getHeight())/2);
      
 		processed=false;
-		ofLog(OF_LOG_VERBOSE)<<"Movie file "<<path<<" loaded: "<<video.getWidth()<<"x"<<video.getHeight()<<" scale: "<<scale<<endl;
+		ofLog(OF_LOG_VERBOSE)<<"Movie file "<<path<<" loaded: "<<getWidth()<<"x"<<getHeight()<<" scale: "<<scale<<endl;
 	}else{
 		processed=true;
 		ofLog(OF_LOG_ERROR)<<"Could not load"<<file<<"."<<endl;
@@ -36,10 +36,20 @@ EasyncVideo::EasyncVideo(string path){
     lastFrame=0;
 }
 
-void EasyncVideo::update(ofxZxing::Result& result){
+void EasyncVideo::start(){
+	play();
+	setPaused(true);
+	setFrame(0);
+}
+
+void EasyncVideo::nextFrame(){
+	nextFrame();
+}
+
+void EasyncVideo::save(ofxZxing::Result& result){
     if(result.getFound()) {
         //ofLog(OF_LOG_NOTICE)<<"Result: "<<result.getScreenPosition()<<endl;
-        frames.push_back(video.getCurrentFrame());
+        frames.push_back(getCurrentFrame());
         firstFrame=frames.front();
         lastFrame=frames.back();
         meanFrame=0;
@@ -51,18 +61,18 @@ void EasyncVideo::update(ofxZxing::Result& result){
     }
     
     if(found){
-       if((video.getCurrentFrame()-lastFrame)>FRAME_DIFF){
+       if((getCurrentFrame()-lastFrame)>FRAME_DIFF){
            processed=true;
 	   }
     }
 	
-	if(video.getIsMovieDone() || video.getPosition()>=0.95f || (float)video.getCurrentFrame()>=(0.95f*video.getTotalNumFrames())){
+	if(getIsMovieDone() || getPosition()>=0.95f || (float)getCurrentFrame()>=(0.95f*getTotalNumFrames())){
         processed=true;
     }
 	
-	if((video.getPosition()*video.getDuration())>=60.0f 
+	if((getPosition()*getDuration())>=60.0f 
 #ifdef USE_VLC 
-		|| ((float)video.getCurrentFrame()/video.getFPS())>=60.0f 
+		|| ((float)getCurrentFrame()/getFPS())>=60.0f 
 #endif
 		){
         processed=true;
@@ -85,10 +95,6 @@ void EasyncVideo::drawInfo(ofTrueTypeFont& font, bool selected){
 }
 
 void EasyncVideo::reset(){
-    
-    video.setFrame(0);
-    video.update();
-    
     processed=false;
     found=false;
     text="-";
@@ -102,7 +108,7 @@ void EasyncVideo::reset(){
 void EasyncVideo::writeResult(){
 	if(!result.size()){
         result["video"]["name"] = file.getFileName();
-		result["video"]["totalFrames"] = video.getTotalNumFrames();
+		result["video"]["totalFrames"] = getTotalNumFrames();
 		if(found){
 			result["video"]["qr"]["text"] = text;
 			result["video"]["qr"]["firstFrame"] = firstFrame;

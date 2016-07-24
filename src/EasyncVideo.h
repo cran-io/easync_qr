@@ -22,18 +22,20 @@
 
 #define USE_VLC
 
-class EasyncVideo{
+#ifdef USE_VLC
+class EasyncVideo: public ofxVLCVideoPlayer{
+#else
+class EasyncVideo: public ofVideoPlayer{
+#endif
 public:
     EasyncVideo(string path);
-    void update(ofxZxing::Result& result);
+    void save(ofxZxing::Result& result);
     void drawInfo(ofTrueTypeFont& font,bool selected=false);
     void reset();
+
+	void start();
+	void nextFrame();
     
-#ifdef USE_VLC
-    ofxVLCVideoPlayer video;
-#else
-    ofVideoPlayer video;
-#endif
     float scale;
     ofPoint offset;
     
