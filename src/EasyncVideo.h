@@ -20,6 +20,8 @@
 #define APP_WIDTH   (VIDEO_WIDTH+GUI_WIDTH)
 #define APP_HEIGHT  (VIDEO_HEIGHT)
 
+#define USE_VLC
+
 class EasyncVideo{
 public:
     EasyncVideo(string path);
@@ -27,7 +29,11 @@ public:
     void drawInfo(ofTrueTypeFont& font,bool selected=false);
     void reset();
     
+#ifdef USE_VLC
     ofxVLCVideoPlayer video;
+#else
+    ofVideoPlayer video;
+#endif
     float scale;
     ofPoint offset;
     

@@ -11,9 +11,10 @@ void ofApp::setup(){
     videos.push_back(test);
     
     current=0;
+
 	videos[current].video.play();
-	videos[current].video.pause();
-	videos[current].video.setFrame(0);    
+	//videos[current].video.setPaused(true);
+	//videos[current].video.setFrame(0);    
 
 #ifdef TRY_HARDER
     for(int i=0; i<PROCESS_IMAGES; i++)
@@ -23,6 +24,10 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	if(ofGetFrameRate()<20.0f){
+		ofLog(OF_LOG_WARNING)<<"App frame rate below 20 FPS. Results might be deceiving"<<endl;
+	}
+
     if(videos[current].processed){
         unsigned int next=current;
         do{
@@ -31,8 +36,8 @@ void ofApp::update(){
         if(next!=current){
             current=next;
             videos[current].video.play();
-			videos[current].video.pause();
-			videos[current].video.setFrame(0);
+			//videos[current].video.setPaused(true);
+			//videos[current].video.setFrame(0);
 #ifdef TRY_HARDER
             for(int i=0; i<PROCESS_IMAGES; i++)
                 process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
@@ -40,10 +45,9 @@ void ofApp::update(){
         }
     }
     
-    videos[current].video.nextFrame();
     videos[current].video.update();
-    if(!videos[current].processed){
-        if(true){//videos[current].video.isFrameNew()) {
+    if(videos[current].video.isFrameNew()){
+        if(!videos[current].processed) {
 #ifdef TRY_HARDER
             for(usedProcess=0; usedProcess<PROCESS_IMAGES; usedProcess++){
                 process[usedProcess].setFromPixels(videos[current].video.getPixelsRef());
@@ -71,13 +75,14 @@ void ofApp::update(){
                     break;
             }
 #else
-			//result = ofxZxing::decode(videos[current].video.getPixelsRef());
+			result = ofxZxing::decode(videos[current].video.getPixelsRef());
 #endif
-            //videos[current].update(result);
+            videos[current].update(result);
+			if(videos[current].processed){
+				videos[current].writeResult();
+			}
         }
-        else{
-            //ofLog(OF_LOG_WARNING)<<"Moving without new frame."<<endl;
-        }
+		//videos[current].video.nextFrame();
     }
 }
 
@@ -150,7 +155,9 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+	if(key == ' '){
+		ofSaveImage(videos[current].video.getPixelsRef(),ofGetTimestampString()+".png");
+	}
 }
 
 //--------------------------------------------------------------

@@ -16,7 +16,7 @@ EasyncVideo::EasyncVideo(string path){
 	file.open(path);
 
     if(video.loadMovie(path)){
-		video.setLoop(false);
+		video.setLoopState(OF_LOOP_NONE);
         
 		scale = min(VIDEO_WIDTH/video.getWidth(), VIDEO_HEIGHT/video.getHeight());
 		if(scale>1.0f)
@@ -52,14 +52,21 @@ void EasyncVideo::update(ofxZxing::Result& result){
     
     if(found){
        if((video.getCurrentFrame()-lastFrame)>FRAME_DIFF){
-		   writeResult();
            processed=true;
 	   }
     }
-	else if(video.getPosition()>=0.95f || video.getPosition()*video.getDuration()>=60.0f){
-		writeResult();
+	
+	if(video.getIsMovieDone() || video.getPosition()>=0.95f || (float)video.getCurrentFrame()>=(0.95f*video.getTotalNumFrames())){
         processed=true;
     }
+	
+	if((video.getPosition()*video.getDuration())>=60.0f 
+#ifdef USE_VLC 
+		|| ((float)video.getCurrentFrame()/video.getFPS())>=60.0f 
+#endif
+		){
+        processed=true;
+	}
 }
 
 void EasyncVideo::drawInfo(ofTrueTypeFont& font, bool selected){
@@ -73,9 +80,7 @@ void EasyncVideo::drawInfo(ofTrueTypeFont& font, bool selected){
     
     ofSetColor(found?COLOR_YES:COLOR_NO);
     font.drawString(text,10,50);
-    font.drawString("F:"+ofToString(firstFrame),10,65);
-    font.drawString("M:"+ofToString(meanFrame),50,65);
-    font.drawString("L:"+ofToString(lastFrame),90,65);
+    font.drawString("F:"+ofToString(firstFrame)+" M:"+ofToString(meanFrame)+" L:"+ofToString(lastFrame),10,65);
     ofPopStyle();
 }
 
