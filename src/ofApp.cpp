@@ -11,8 +11,10 @@ void ofApp::setup(){
     videos.push_back(test);
     
     current=0;
-    //videos[current].video.play();
-    
+	videos[current].video.play();
+	videos[current].video.pause();
+	videos[current].video.setFrame(0);    
+
 #ifdef TRY_HARDER
     for(int i=0; i<PROCESS_IMAGES; i++)
         process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
@@ -28,7 +30,9 @@ void ofApp::update(){
         }while(videos[next].processed && next!=current);
         if(next!=current){
             current=next;
-            //videos[current].video.play();
+            videos[current].video.play();
+			videos[current].video.pause();
+			videos[current].video.setFrame(0);
 #ifdef TRY_HARDER
             for(int i=0; i<PROCESS_IMAGES; i++)
                 process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
@@ -39,7 +43,7 @@ void ofApp::update(){
     videos[current].video.nextFrame();
     videos[current].video.update();
     if(!videos[current].processed){
-        if(videos[current].video.isFrameNew()) {
+        if(true){//videos[current].video.isFrameNew()) {
 #ifdef TRY_HARDER
             for(usedProcess=0; usedProcess<PROCESS_IMAGES; usedProcess++){
                 process[usedProcess].setFromPixels(videos[current].video.getPixelsRef());
@@ -67,9 +71,9 @@ void ofApp::update(){
                     break;
             }
 #else
-			result = ofxZxing::decode(videos[current].video.getPixelsRef());
+			//result = ofxZxing::decode(videos[current].video.getPixelsRef());
 #endif
-            videos[current].update(result);
+            //videos[current].update(result);
         }
         else{
             //ofLog(OF_LOG_WARNING)<<"Moving without new frame."<<endl;

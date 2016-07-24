@@ -16,7 +16,7 @@ EasyncVideo::EasyncVideo(string path){
 	file.open(path);
 
     if(video.loadMovie(path)){
-		video.setLoopState(OF_LOOP_NONE);
+		video.setLoop(false);
         
 		scale = min(VIDEO_WIDTH/video.getWidth(), VIDEO_HEIGHT/video.getHeight());
 		if(scale>1.0f)
@@ -24,7 +24,7 @@ EasyncVideo::EasyncVideo(string path){
 		offset.set((VIDEO_WIDTH-scale*video.getWidth())/2,(VIDEO_HEIGHT-scale*video.getHeight())/2);
      
 		processed=false;
-		ofLog(OF_LOG_VERBOSE)<<"Movie file "<<video.getMoviePath()<<" loaded: "<<video.getWidth()<<"x"<<video.getHeight()<<" scale: "<<scale<<endl;
+		ofLog(OF_LOG_VERBOSE)<<"Movie file "<<path<<" loaded: "<<video.getWidth()<<"x"<<video.getHeight()<<" scale: "<<scale<<endl;
 	}else{
 		processed=true;
 		ofLog(OF_LOG_ERROR)<<"Could not load"<<file<<"."<<endl;
@@ -81,7 +81,7 @@ void EasyncVideo::drawInfo(ofTrueTypeFont& font, bool selected){
 
 void EasyncVideo::reset(){
     
-    video.firstFrame();
+    video.setFrame(0);
     video.update();
     
     processed=false;

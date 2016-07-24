@@ -12,6 +12,8 @@
 #include "ofxZxing.h"
 #include "ofxJSON.h"
 
+#include "ofxVLCVideoPlayer.h"
+
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
 
@@ -25,7 +27,7 @@ public:
     void drawInfo(ofTrueTypeFont& font,bool selected=false);
     void reset();
     
-    ofVideoPlayer video;
+    ofxVLCVideoPlayer video;
     float scale;
     ofPoint offset;
     
