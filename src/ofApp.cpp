@@ -56,7 +56,7 @@ void ofApp::setup(){
 
 #ifdef TRY_HARDER
     for(int i=0; i<PROCESS_IMAGES; i++)
-        process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
+        process[i].allocate(videos[current].getWidth(), videos[current].getHeight());
 #endif
 
 	fps=nfps=ofGetFrameRate();
@@ -94,7 +94,7 @@ void ofApp::update(){
             videos[current].start();
 #ifdef TRY_HARDER
             for(int i=0; i<PROCESS_IMAGES; i++)
-                process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
+                process[i].allocate(videos[current].getWidth(), videos[current].getHeight());
 #endif
         }
     }
@@ -104,7 +104,7 @@ void ofApp::update(){
         if(!videos[current].processed) {
 #ifdef TRY_HARDER
             for(usedProcess=0; usedProcess<PROCESS_IMAGES; usedProcess++){
-                process[usedProcess].setFromPixels(videos[current].video.getPixelsRef());
+                process[usedProcess].setFromPixels(videos[current].getPixelsRef());
                 switch(usedProcess){
                     case 0:
                         break;
@@ -166,10 +166,10 @@ void ofApp::draw(){
             ofSetColor(255,255);
         else
             ofSetColor(255,125);
-        process[i].draw(i*videos[current].video.getWidth()/PROCESS_IMAGES,0,videos[current].video.getWidth()/PROCESS_IMAGES,videos[current].video.getHeight()/PROCESS_IMAGES);
+        process[i].draw(i*videos[current].getWidth()/PROCESS_IMAGES,0,videos[current].getWidth()/PROCESS_IMAGES,videos[current].getHeight()/PROCESS_IMAGES);
     }
     ofSetColor(125);
-    ofLine(0,videos[current].video.getHeight()/PROCESS_IMAGES,videos[current].video.getWidth(),videos[current].video.getHeight()/PROCESS_IMAGES);
+    ofLine(0,videos[current].getHeight()/PROCESS_IMAGES,videos[current].getWidth(),videos[current].getHeight()/PROCESS_IMAGES);
     ofPopMatrix();
 #endif
     ofPushMatrix();
