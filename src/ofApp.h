@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxArgs.h"
 #include "ofxZxing.h"
 
 #include "EasyncVideo.h"
@@ -18,8 +19,9 @@
 #endif
 
 class ofApp : public ofBaseApp{
-
+		ofxArgs* args;
 	public:
+		ofApp(ofxArgs* args);
 		void setup();
 		void update();
 		void draw();
@@ -33,6 +35,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo info);
 		void gotMessage(ofMessage msg);
+
+		void parseJson(string path);
     
     vector<EasyncVideo> videos;
     unsigned int current;
@@ -45,4 +49,5 @@ class ofApp : public ofBaseApp{
 #endif
 
 	ofTrueTypeFont font;
+	int fps,nfps;
 };

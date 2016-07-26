@@ -12,7 +12,7 @@
 #include "ofxZxing.h"
 #include "ofxJSON.h"
 
-#define APP_NO_WINDOW
+//#define APP_NO_WINDOW
 //#define TRY_HARDER
 #define USE_VLC
 

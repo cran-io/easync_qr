@@ -3,3 +3,4 @@ ofxCv
 ofxJSON
 ofxVLCVideoPlayer
 ofxZxing
+ofxArgs

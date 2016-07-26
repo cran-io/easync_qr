@@ -1,30 +1,88 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
+ofApp::ofApp(ofxArgs* args){
+	this->args = args;
+}
+
+//--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetLogLevel(OF_LOG_NOTICE);
     ofSetWindowTitle("Easync Media - QR Slate");
+	ofLogNotice("Easync Media - QR Slate")<<"Starting application";
+
+#ifdef APP_NO_WINDOW
+	ofLogNotice("Easync Media - QR Slate")<<"No window mode";
+#endif
+#ifdef TRY_HARDER
+	ofLogNotice("Easync Media - QR Slate")<<"Try harder is ON";
+#endif
+#ifdef USE_VLC
+	ofLogNotice("Easync Media - QR Slate")<<"Using VLC library";
+#endif
 
 	font.loadFont("font.ttf",12);
 
-    EasyncVideo test("test.mp4");
-    videos.push_back(test);
+	if(args->getCount()>1){
+		for(int i=1;i<args->getCount();i++){
+			string path=args->getString(i);
+			ofFile file(path);
+			if(file.exists()){
+				if(file.getExtension()=="json"){
+					ofLogNotice("Easync Media - QR Slate")<<"Parsing file: "<<path;
+					parseJson(file.getAbsolutePath());
+				}
+				else{
+					ofLogWarning("Easync Media - QR Slate")<<"File is not json: "<<path;
+				}
+			}
+			else{
+				ofLogWarning("Easync Media - QR Slate")<<"File does not exist: "<<path;
+			}
+		}
+	}
+	else{
+		ofLogWarning("Easync Media - QR Slate")<<"No command line arguments received";
+	}
+
+	if(!videos.size()){
+		ofLogWarning("Easync Media - QR Slate")<<"No videos added. Adding default video test.mp4 from data folder";
+		EasyncVideo test("test.mp4");
+		videos.push_back(test);
+	}
     
     current=0;
-
 	videos[current].start();    
 
 #ifdef TRY_HARDER
     for(int i=0; i<PROCESS_IMAGES; i++)
         process[i].allocate(videos[current].video.getWidth(), videos[current].video.getHeight());
 #endif
+
+	fps=nfps=ofGetFrameRate();
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-	if(ofGetFrameRate()<20.0f){
-		ofLog(OF_LOG_WARNING)<<"App frame rate below 20 FPS. Results might be deceiving"<<endl;
+void ofApp::parseJson(string path){
+	ofxJSONElement input;
+	input.open(path);
+	for(int i=0;i<input["videos"].size();i++){
+		EasyncVideo video(input["videos"][i]["path"].asString());
+		videos.push_back(video);
 	}
+}
+
+
+//--------------------------------------------------------------
+void ofApp::update(){
+	nfps=ofGetFrameRate();
+	if(nfps<20 && fps>=20){
+		ofLog(OF_LOG_WARNING)<<"App frame rate below 20 FPS. Results might be deceiving";
+	}
+	//else if(nfps>=20 && fps<20){
+	//	ofLog(OF_LOG_WARNING)<<"App frame rate OK";
+	//}
+	fps=nfps;
 
     if(videos[current].processed){
         unsigned int next=current;
@@ -148,13 +206,15 @@ void ofApp::keyPressed(int key){
 	else if(key == 'n'){
 		videos[current].nextFrame();
 	}
+	else if(key == 's'){
+		ofSaveImage(videos[current].getPixelsRef(),ofGetTimestampString()+".png");
+		ofLog(OF_LOG_NOTICE)<<"Saving image frame to disk";
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	if(key == ' '){
-		ofSaveImage(videos[current].getPixelsRef(),ofGetTimestampString()+".png");
-	}
+	
 }
 
 //--------------------------------------------------------------
@@ -189,6 +249,7 @@ void ofApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo info){
+	ofLog(OF_LOG_VERBOSE)<<"Drag event";
     if( info.files.size() > 0 ){
         for(unsigned int i = 0; i < info.files.size(); i++){
             if(ofDirectory::doesDirectoryExist(info.files[i])){
@@ -203,7 +264,7 @@ void ofApp::dragEvent(ofDragInfo info){
 #ifdef TARGET_WIN32
 					if(absolutePath.at(1)!=':'){
 						absolutePath="C:"+absolutePath;
-						ofLog(OF_LOG_WARNING)<<"[WINDOWS] Absolute file path doesnt have ':'. Adding 'C:' to the path, please move them to the Local Disk directory:"<<absolutePath<<endl;
+						ofLog(OF_LOG_WARNING)<<"[WINDOWS] Absolute file path doesnt have ':'. Adding 'C:' to the path, please move them to the Local Disk directory: "<<absolutePath;
 					}
 #endif
 					videos.push_back(EasyncVideo(absolutePath));

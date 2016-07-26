@@ -26,10 +26,10 @@ EasyncVideo::EasyncVideo(string path){
 		offset.set((VIDEO_WIDTH-scale*getWidth())/2,(VIDEO_HEIGHT-scale*getHeight())/2);
      
 		processed=false;
-		ofLog(OF_LOG_VERBOSE)<<"Movie file "<<path<<" loaded: "<<getWidth()<<"x"<<getHeight()<<" scale: "<<scale<<endl;
+		ofLogNotice("EasyncVideo")<<"Movie file "<<path<<" loaded: "<<getWidth()<<"x"<<getHeight();
 	}else{
 		processed=true;
-		ofLog(OF_LOG_ERROR)<<"Could not load"<<file<<"."<<endl;
+		ofLogError("EasyncVideo")<<"Could not load "<<path;
 	}
     found=false;
     text="-";
@@ -40,17 +40,22 @@ EasyncVideo::EasyncVideo(string path){
 
 void EasyncVideo::start(){
 	play();
+#ifndef USE_VLC
 	setPaused(true);
 	setFrame(0);
+#endif
+	ofLogNotice("EasyncVideo")<<"Starting to process "<<file.getFileName();
 }
 
 void EasyncVideo::next(){
+#ifndef USE_VLC
 	nextFrame();
+#endif
 }
 
 void EasyncVideo::save(ofxZxing::Result& result){
     if(result.getFound()) {
-        //ofLog(OF_LOG_NOTICE)<<"Result: "<<result.getScreenPosition()<<endl;
+        //ofLog(OF_LOG_NOTICE)<<"Result: "<<result.getScreenPosition();
         frames.push_back(getCurrentFrame());
         firstFrame=frames.front();
         lastFrame=frames.back();
@@ -60,7 +65,7 @@ void EasyncVideo::save(ofxZxing::Result& result){
         meanFrame/=frames.size();
         text=result.getText();
 		if(!found)
-			ofLog(OF_LOG_NOTICE)<<"Found QR code in video with text: "<<result.getText()<<endl;
+			ofLogNotice("EasyncVideo")<<"Found QR code in video with text: "<<result.getText();
         found=true;
     }
     
@@ -119,6 +124,8 @@ void EasyncVideo::writeResult(){
 			result["video"]["qr"]["meanFrame"] = meanFrame;
 			result["video"]["qr"]["lastFrame"] = lastFrame;
 		}
-		result.save(file.getEnclosingDirectory()+file.getBaseName()+".json",true);
+		string outputFile = file.getEnclosingDirectory()+file.getBaseName()+".json";
+		result.save(outputFile,true);
+		ofLogNotice("EasyncVideo")<<"Wrote output file: "<<outputFile;
 	}
 }

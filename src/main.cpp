@@ -6,7 +6,9 @@
 #endif
 
 //========================================================================
-int main( ){
+int main(int argc, char *argv[]){
+	ofxArgs* args = new ofxArgs(argc, argv);
+
 #ifdef APP_NO_WINDOW
 	ofPtr<ofAppNoWindow> window(new ofAppNoWindow());
 	ofSetupOpenGL(window,APP_WIDTH,APP_HEIGHT,OF_WINDOW);
@@ -17,6 +19,6 @@ int main( ){
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:
-	ofRunApp(new ofApp());
-
+	ofRunApp(new ofApp(args));
+	delete args;
 }
