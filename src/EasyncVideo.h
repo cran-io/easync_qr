@@ -14,7 +14,7 @@
 
 //#define APP_NO_WINDOW
 #define TRY_HARDER
-#define USE_VLC
+//#define USE_VLC
 
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480

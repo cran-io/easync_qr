@@ -40,9 +40,9 @@ EasyncVideo::EasyncVideo(string path){
 
 void EasyncVideo::start(){
 	play();
+	setFrame(0);
 #ifndef USE_VLC
 	setPaused(true);
-	setFrame(0);
 #endif
 	ofLogNotice("EasyncVideo")<<"Starting to process "<<file.getFileName();
 }
@@ -104,6 +104,8 @@ void EasyncVideo::drawInfo(ofTrueTypeFont& font, bool selected){
 }
 
 void EasyncVideo::reset(){
+	stop();
+
     processed=false;
     found=false;
     text="-";
