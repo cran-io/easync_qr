@@ -26,7 +26,7 @@ class EasyncVideo: public ofxVLCVideoPlayer{
 class EasyncVideo: public ofVideoPlayer{
 #endif
 public:
-    EasyncVideo(string path);
+    EasyncVideo(string path, string o = "");
     void save(ofxZxing::Result& result);
     void drawInfo(ofTrueTypeFont& font,bool selected=false);
     void reset();
@@ -43,6 +43,8 @@ public:
     vector<unsigned int> frames;
     unsigned int firstFrame,meanFrame,lastFrame;
     string text;
+
+	string outputDir;
 
 	ofxJSONElement result;
 	void writeResult();

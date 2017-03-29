@@ -23,9 +23,21 @@ void ofApp::setup(){
 
 	font.loadFont("font.ttf",12);
 
-	if(args->getCount()>1){
-		for(int i=1;i<args->getCount();i++){
-			string path=args->getString(i);
+	outputDir = "";
+	if(args->contains("-o")){
+		outputDir = args->getString("-o");
+	}
+
+	vector< string > files;
+	for(int i=1;i<args->getCount();i++){
+		string arg=args->getString(i);
+		if(arg != "-o" && arg != outputDir)
+			files.push_back(arg);
+	}
+
+	if(files.size()){
+		for(int i=1;i<files.size();i++){
+			string path=files[i];
 			ofFile file(path);
 			if(file.exists()){
 				if(file.getExtension()=="json"){
@@ -47,7 +59,7 @@ void ofApp::setup(){
 
 	if(!videos.size()){
 		ofLogWarning("Easync Media - QR Slate")<<"No videos added. Adding default video test.mp4 from data folder";
-		EasyncVideo test("test.mp4");
+		EasyncVideo test("test.mp4",outputDir);
 		videos.push_back(test);
 	}
     
@@ -67,7 +79,7 @@ void ofApp::parseJson(string path){
 	ofxJSONElement input;
 	input.open(path);
 	for(int i=0;i<input["videos"].size();i++){
-		EasyncVideo video(input["videos"][i]["path"].asString());
+		EasyncVideo video(input["videos"][i]["path"].asString(),outputDir);
 		videos.push_back(video);
 	}
 }

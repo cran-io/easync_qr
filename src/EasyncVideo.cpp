@@ -12,13 +12,14 @@
 #define COLOR_YES ofColor(0,180,80,alpha)
 #define COLOR_NO ofColor(180,20,60,alpha)
 
-EasyncVideo::EasyncVideo(string path){
+EasyncVideo::EasyncVideo(string path, string o){
 	file.open(path);
 #ifdef APP_NO_WINDOW
 	setUseTexture(false);
 #endif
     if(loadMovie(path)){
 		setLoopState(OF_LOOP_NONE);
+		setVolume(0);
         
 		scale = min(VIDEO_WIDTH/getWidth(), VIDEO_HEIGHT/getHeight());
 		if(scale>1.0f)
@@ -33,6 +34,7 @@ EasyncVideo::EasyncVideo(string path){
 	}
     found=false;
     text="-";
+	outputDir=o;
     firstFrame=0;
     meanFrame=0;
     lastFrame=0;
@@ -79,9 +81,9 @@ void EasyncVideo::save(ofxZxing::Result& result){
         processed=true;
     }
 	
-	if((getPosition()*getDuration())>=60.0f 
+	if((getPosition()*getDuration())>=30.0f 
 #ifdef USE_VLC 
-		|| ((float)getCurrentFrame()/getFPS())>=60.0f 
+		|| ((float)getCurrentFrame()/getFPS())>=30.0f 
 #endif
 		){
         processed=true;
@@ -127,6 +129,8 @@ void EasyncVideo::writeResult(){
 			result["video"]["qr"]["lastFrame"] = lastFrame;
 		}
 		string outputFile = file.getEnclosingDirectory()+file.getBaseName()+".json";
+		if(outputDir != "")
+			outputFile = outputDir+file.getBaseName()+".json";
 		result.save(outputFile,true);
 		ofLogNotice("EasyncVideo")<<"Wrote output file: "<<outputFile;
 	}

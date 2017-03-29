@@ -40,6 +40,8 @@ class ofApp : public ofBaseApp{
     
     vector<EasyncVideo> videos;
     unsigned int current;
+
+	string outputDir;
     
     ofxZxing::Result result;
 
