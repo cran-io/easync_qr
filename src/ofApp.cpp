@@ -72,6 +72,9 @@ void ofApp::setup(){
 #endif
 
 	fps=nfps=ofGetFrameRate();
+
+	if(!videos.size())
+		std::exit(0);
 }
 
 //--------------------------------------------------------------
