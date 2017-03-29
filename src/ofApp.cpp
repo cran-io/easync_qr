@@ -109,6 +109,13 @@ void ofApp::update(){
                 process[i].allocate(videos[current].getWidth(), videos[current].getHeight());
 #endif
         }
+		else{
+			bool allProcessed = true;
+			for(int i=0; i<videos.size(); i++)
+				allProcessed &= videos[i].processed;
+			if(allProcessed)
+				ofExit();
+		}
     }
     
     videos[current].update();
